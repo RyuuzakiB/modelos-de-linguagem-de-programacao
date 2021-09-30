@@ -1,0 +1,148 @@
+cidade(poa).
+cidade(brasilia).
+pais(brasil).
+estado(rgs).
+capital(brasil, brasilia).
+capital(rgs, poa).
+capital_pais(P,C):- pais(P), cidade(C), capital(P,C).
+capital_estado(E,C):-estado(E), cidade(C), capital(E,C).
+
+% Resposta da quest�o 1:
+
+% pessoa(Nome).
+pessoa('Joao').
+pessoa('Maria').
+pessoa('Ana').
+pessoa('Jose').
+pessoa('Marcio').
+pessoa('Leonardo').
+pessoa('Daniele').
+pessoa('Carla').
+pessoa('Fernando').
+pessoa('Marcelo').
+
+% feminino(Nome).
+feminino('Maria').
+feminino('Ana').
+feminino('Carla').
+feminino('Daniele').
+
+% masculino(Nome).
+masculino('Joao').
+masculino('Jose').
+masculino('Marcio').
+masculino('Leonardo').
+masculino('Fernando').
+masculino('Marcelo').
+
+%filho(Pai, Filho).
+filho('Joao', 'Ana').
+filho('Joao', 'Jose').
+filho('Joao', 'Marcio').
+filho('Maria', 'Ana').
+filho('Maria', 'Jose').
+filho('Maria', 'Marcio').
+filho('Leonardo', 'Carla').
+filho('Leonardo', 'Fernando').
+filho('Marcio', 'Marcelo').
+filho('Daniele', 'Carla').
+filho('Daniele', 'Fenando').
+filho('Carla', 'Marcelo').
+
+%gosta(Pessoa, Gosto).
+gosta('Joao', 'leitura').
+gosta('Maria', 'leitura').
+gosta('Leonardo', 'leitura').
+gosta('Joao', 'cinema').
+gosta('Marcio', 'cinema').
+gosta('Carla', 'cinema').
+gosta('Marcio', 'boliche').
+gosta('Carla', 'boliche').
+gosta('Maria', 'boliche').
+gosta('Joao', 'Maria').
+gosta('Maria', 'Joao').
+gosta('Maria', 'peixe').
+gosta('Maria', 'vinho').
+gosta('Joao', 'vinho').
+
+% pai(Pai, Filho)
+ehpai(P, F):-filho(P,F).
+pai(P, F):-ehpai(P,F), masculino(P).
+mae(M, F):-ehpai(M,F), feminino(M).
+
+irmaos(X, Y):- pai(P, X), pai(P,Y), mae(M, X), mae(M, Y), X\=Y.
+irmao(X,Y):-irmaos(X,Y), masculino(Y).
+irma(X,Y):-irmaos(X,Y), feminino(Y).
+
+meioirmaos(X,Y):-(pai(P,X), pai(P,Y)), X\=Y.
+meioirmaos(X,Y):-(mae(M,X), mae(M,Y)), X\=Y.
+
+meioirmao(X,Y):-meioirmaos(X,Y), masculino(Y).
+meioirma(X,Y):-meioirmaos(X,Y), feminino(Y).
+
+%tios(Tio, Sobrinho).
+tios(T,S):-pai(P,S), irmaos(P,T).
+tios(T,S):-mae(M,S), irmaos(M,T).
+tia(T,S):-tios(T,S), feminino(T).
+tio(T,S):-tios(T,S), masculino(T).
+
+%avos(Avo, Neto).
+avos(A,N):-ehpai(P, N), ehpai(A,P).
+avo(A,N):-avos(A,N), masculino(A).
+avoh(A,N):-avos(A,N), feminino(A).
+
+%antepassado(Antepassado, Pessoa).
+antepassado(A,P):-ehpai(A,P).
+antepassado(A,P):-ehpai(X,P),antepassado(A,X).
+
+%contaAntepassados(Pessoa, Quantidade).
+contaAntepassados(P,Q):-setof(X, antepassado(X,P), Ls),length(Ls, Q).
+
+% parentes
+parente(X,Y):-irmaos(X,Y);meioirmao(X,Y).
+parente(X,Y):-antepassado(X,Y). % antepassados
+parente(X,Y):-antepassado(Y,X). % filhos, netos
+parente(X,Y):-antepassado(Z,X),
+	antepassado(Z,Y),
+	not(antepassado(X,Y)),
+	X\=Y. % sogro, sogra
+parente(X,Y):-antepassado(Z,X),
+	antepassado(Z,H),
+	H\=X,
+	irmaos(H,Y). %cunhados
+
+
+
+
+% Cláusula que imprime na tela os elementos que fazem parte de uma lista (recebida como parâmetro)
+
+imprimeLista([]):-!.
+imprimeLista([H|T]):- write(H), write('\n'), imprimeLista(T).
+
+$ Cláusula que conta quantos elementos fazem parte de uma lista
+
+contaLst([],0):-!. % se a lista for vazia, retorna 0 elementos
+contaLst([H|T], R):- contaLst(T, R2), R is R2+1. % acumula
+
+% Cláusula (regra) que retorna o último elemento de uma lista (recebida como parâmetro)
+
+devolveUltimo([X], X):-!.
+devolveUltimo([_|T], R):-devolveUltimo(T, R).
+
+% Cláusula (regra) que inverte os elementos de uma lista recebida como parâmetro
+
+concLista([],L,L).
+concLista([H|T],L,[H|D]):-concLista(T,L,D).
+
+inverteLista([],[]).
+inverteLista([H|T],L):-inverteLista(T,X),concLista(X,[H],L).
+
+% Cláusula (regra) que cria uma lista das pessoas que gostam de determinada coisa ou pessoa
+% (utilizando como base a árvore genealógica criada na última aula)
+
+listaPessoasPorGosto(Gosto, Lst):-findall(X, gosta(X, Gosto), Lst).
+
+% Cláusula (regra) que conta quantas cláusulas de determinado tipo existem 
+% Sintaxe: conta(cláusula(Var), Var, Resposta)
+
+contaClausulas(C, V, R):-findall(V, C, Lst), length(Lst, R).
