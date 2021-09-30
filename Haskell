@@ -1,0 +1,83 @@
+'listavezesx' 
+Elaborar a função invertelst, que recebe uma lista e retorna ela invertida.
+
+-- Opção 1:
+lsvezesx [] _ = []
+lsvezesx (h:t) x = h*x:lsvezesx t x
+
+-- Opção 2:
+lsvezesx' [] _ = []
+lsvezesx' ls x = (head ls)*x:lsvezesx' (tail ls) x
+
+Respostas do exercício 1: 'invertelst':
+Elaborar a função invertelst, que recebe uma lista e retorna ela invertida.
+
+-- Opção 1:
+invertels [] = []
+invertels (h:t) = invertels t ++ [h]
+
+-- Opção 2:
+invertels' [] = []
+invertels' ls = invertels' (tail ls) ++ [head ls]
+Respostas do exercício 2: 'powlist':
+Elaborar a função powlist, que recebe uma lista e um número, retornando uma lista com os elementos elevados ao número recebido.
+
+-- Opção 1:
+powls [] _ = []
+powls (h:t) x = h ^ x:powls t x
+
+-- Opção 2:
+
+powls' [] _ = []
+powls' (h:t) x = potencia h x:powls' t x
+   where
+      potencia x 0 = 1
+      potencia x p = x * (potencia x (p-1))
+
+-- Opção 3:
+
+powls'' ([], _) = []
+powls'' ((h:t), x) = h ^ x:powls'' (t, x)
+
+
+
+
+Respostas do exercício 1: 'somatorio':
+Usando 'foldl' ou 'foldr', elabore a função 'somatorio', que recebe uma lista de números reais e devolve a soma dos números da lista. 
+P.ex.: somatorio[1.0, 2.2, 4.0] --> 7.2
+
+somatorio ls = foldr (+) 0 ls
+
+Respostas do exercício 2: 'norma':
+Usando funções de ordem superior ('map', 'fold'...) e lambda (i.e., não nomeadas, com 'fn'), elabore uma função que receba uma lista de números reais (representando um vetor Euclidiano) e calcule a norma de tal vetor, conforme a descrição seguinte (tal definição leva em conta que os valores do vetor estão normalizados entre 0.0 e 1.0): 
+
+norma = raiz_quadrada(somatório dos quadrados dos elementos)
+
+Ou seja, o somatório dos quadrados dos números presentes em tal lista.
+
+P.ex.: norma [0.1, 0.2, 0.3, 0.4] --> 0.547722557505 
+
+norma ls = sqrt (foldr (+) 0 (map (^2) ls))
+
+Respostas do exercício 3: 'produto':
+Usando funções de ordem superior ('map', 'fold'...), elabore uma função que receba duas listas de números reais (representando vetores Euclidianos) e calcule o produto interno entre esses vetores, conforme a descrição seguinte (tal definição leva em conta que os valores dos vetores estão normalizados entre 0.0 e 1.0): 
+produto ls1 ls2 = foldr (+) 0 (map (\(x,y)->x*y) (zip ls1 ls2))
+
+
+
+Respostas do exercício 4: 'sim':
+Os motores de busca (como Google, Yahoo, Bing e outros) são baseados em teorias, algoritmos e métodos desenvolvidos em uma área chamada de Recuperação de Informações (Information Retrieval). Nessa área, diversos modelos de representação de documentos foram desenvolvidas. Um dos modelos mais conhecidos é o modelo Espaço-Vetorial, de Gerald Salton.
+
+Nesse modelo, os documentos (ou páginas Web) são representados como pontos em um espaço Euclidiano. As dimensões desse espaço são dadas pelas palavras presentes em todos os documentos (i.e., cada palavra da coleção de documentos é considerada uma dimensão). A representação dos documentos no espaço é feita, portanto, através de um vetor de n dimensões, onde cada dimensão é uma palavra com posição fixa no vetor. Todos os vetores possuem a mesma quantidade de dimensões, cada uma com sua posição (normalmente em ordem alfabética):
+
+[palavra1, palavra2, palavra3, ... palavra_n] 
+
+Para representar um documento, cada dimensão representa a força (ou peso) da palavra naquele documento. Caso a palavra não se encontre no documento, ela recebe o peso 0.0. Caso ela esteja presente, pode-se utilizar uma fórmula de medição de peso. Existem muitas equações que podem ser utilizadas para calcular o peso (ver tf-idf e suas variações), sendo uma das mais simples a frequência relativa (i.e., o número de ocorrências da palavra no documento dividido pelo número de palavras do documento). 
+
+Usando funções elaboradas nos exercícios anteriores (norma e produto interno), elabore uma função que receba duas listas de números reais (representando os vetores de palavras dos documentos) e calcule a similaridade entre esses dois documentos, conforme a descrição seguinte (tal definição leva em conta que os valores dos vetores estão normalizados entre 0.0 e 1.0): 
+
+
+
+Perceba que a definição leva em conta o cálculo do cosseno entre os dois vetores (detalhes em: http://en.wikipedia.org/wiki/Cosine_similarity). 
+
+sim ls1 ls2 = produto ls1 ls2 / (norma ls1 * norma ls2)
